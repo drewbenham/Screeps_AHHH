@@ -1,4 +1,5 @@
 const { runInContext } = require("lodash")
+var roleUpgrader = require("./upgrader")
 
 var roleHarvester = {
 
@@ -24,9 +25,9 @@ var roleHarvester = {
                     creep.moveTo(target[0], {visualizePathStyle: {stroke: '#ff0000'}});
                 }
             }
-            // else {
-            //     roleUpgrader.run(creep)
-            // }
+            else {
+                roleUpgrader.run(creep)
+            }
         }
     }
 };
