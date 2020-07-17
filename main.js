@@ -1,4 +1,5 @@
 var roleHarvester = require("./harvester")
+var spawner = require("./spawner");
 
 module.exports.loop = function() {
     for (var name in Memory.creeps) {
@@ -6,6 +7,10 @@ module.exports.loop = function() {
             delete Memory.creeps[name];
         }
     }
+    
+    console.log(creepNames.HARVESTER_NAME)
+
+    spawner.run();
 
     for (var name in Game.creeps) {
         var creep = Game.creeps[name];
