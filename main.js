@@ -20,6 +20,14 @@ function setOwnedRooms() {
     isNewRooms = false;
 }
 
+/*
+get all sources in our room. (from above)
+find how many creeps can be at each source (see spawner code)
+store that number in sources memory.
+
+Use this number to decide which source to move to for creeps?
+*/
+
 module.exports.loop = function() {
     for (var name in Memory.creeps) {
         if (!Game.creeps[name]) {
