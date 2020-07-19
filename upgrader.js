@@ -4,22 +4,22 @@ var roleUpgrader = {
     run: function(creep) {
         if (creep.memory.upgrading && creep.store[RESOURCE_ENERGY] == 0) {
             creep.memory.upgrading = false;
-            creep.say(":eggplant gotta suk")
+            creep.say("gotta suk")
         }
         if (!creep.memory.upgrading && creep.store.getFreeCapacity() == 0) {
             creep.memory.upgrading = true;
-            creep.say(":hundred-points now i can fuk")
+            creep.say("now i can fuk")
         }
         if (creep.memory.upgrading) {
-            var controller = creep.room.roomController
-            if (creep.upgradeController(controller) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(controller, {visualizePathStyle: {stroke: '#ff0000'}});
+            var roomController = creep.room.controller;
+            if (creep.upgradeController(roomController) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(roomController, {visualizePathStyle: {stroke: '#ff0000'}});
             }
         }
         else {
-            var source = creep.pos.findClosestByRange(FIND_SOURCES_ACTIVE);
-            if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source, {visualizePathStyle: {stroke: '#008000'}});
+            var source = creep.room.find(FIND_SOURCES);
+            if (creep.harvest(source[0]) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(source[0], {visualizePathStyle: {stroke: '#008000'}});
             }
         }
     }

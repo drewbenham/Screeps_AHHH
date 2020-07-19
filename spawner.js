@@ -34,24 +34,27 @@ var spawner = {
         }
 
         // create each creep role that is needed.
-        var harvestersNeeded = totalHarvesterCapacity - harvesters.length;
-        if (harvestersNeeded > 0) {
-            var harvesterName = creepNames.HARVESTER_NAME + Game.time;
-            console.log('Behold A New ' + creepNames.HARVESTER_NAME);
-            Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], harvesterName, {memory: {role: roles.HARVESTER}});
-        }
+        var startingSpawn = Game.spawns['Spawn1'];
+        if (!startingSpawn.spawning) {
+            if (upgraders.length < totalUpgraderCapacity) {
+                var upgraderName = creepNames.UPGRADER_NAME + Game.time;
+                console.log('Behold A New ' + creepNames.UPGRADER_NAME);
+                Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], upgraderName, {memory: {role: roles.UPGRADER, upgrading: true}})
+            }
 
-        if (upgraders.length < totalUpgraderCapacity) {
-            var upgraderName = creepNames.UPGRADER_NAME + Game.time;
-            console.log('Behold A New ' + creepNames.UPGRADER_NAME);
-            Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], upgraderName, {memory: {role: roles.UPGRADER}})
-        }
+            if (builders.length < totalBuilderCapacity) {
+                var builderName = creepNames.BUILDER_NAME + Game.time;
+                console.log('Behold A New ' + creepNames.BUILDER_NAME);
+                Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], builderName, {memory: {role: roles.BUILDER, building: true}})
+            }
 
-        if (builders.length < totalBuilderCapacity) {
-            var builderName = creepNames.BUILDER_NAME + Game.time;
-            console.log('Behold A New ' + creepNames.BUILDER_NAME);
-            Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], builderName, {memory: {role: roles.BUILDER}})
-        }
+            var harvestersNeeded = totalHarvesterCapacity - harvesters.length;
+            if (harvestersNeeded > 0) {
+                var harvesterName = creepNames.HARVESTER_NAME + Game.time;
+                console.log('Behold A New ' + creepNames.HARVESTER_NAME);
+                Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], harvesterName, {memory: {role: roles.HARVESTER, upgrading: true}});
+            }
+        }   
         /*
         get all creep types
         determine how many you need total:

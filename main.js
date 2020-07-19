@@ -36,7 +36,7 @@ module.exports.loop = function() {
 
     for (var name in Game.creeps) {
         var creep = Game.creeps[name];
-        var creepRole = Game.getObjectById(creep.memory.role);
+        var creepRole = creep.memory.role;
 
         if (creepRole == roles.HARVESTER) {
             roleHarvester.run(creep);
