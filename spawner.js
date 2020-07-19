@@ -11,25 +11,46 @@ var spawner = {
         var upgraders = _.filter(allCreeps, (creep) => creep.memory.role == roles.UPGRADER);
         var builders = _.filter(allCreeps, (creep) => creep.memory.role == roles.BUILDER);
         
-        cachedRooms = []
-        if (Memory.ownedRooms) {
-            cachedRooms = Memory.ownedRooms;
-        } 
-        else {
-            cachedRooms = getOwnedRooms();
+        // get all cached rooms. 
+        var roomsAvailable = Game.rooms;
+        var cachedRooms = [];
+        for (var roomName in roomsAvailable) {
+            var room = roomsAvailable[roomName];
+            if (room.memory.ownedRoom) {
+                cachedRooms.push(room)
+            }
         }
 
+        // find the total amount of each creep role we can handle
         var totalHarvesterCapacity = 0;
+        var totalUpgraderCapacity = 0;
+        var totalBuilderCapacity = 1;
 
-        for (var rc in ownedRooms) {
-            totalHarvesterCapacity = findNeededHarvesterAmount(ownedRooms[rc]);
+        for (var rc in cachedRooms) {
+            totalHarvesterCapacity = findNeededHarvesterAmount(cachedRooms[rc]);
+        }
+        for (var rc in cachedRooms) {
+            totalUpgraderCapacity = findNeededUpgraderAmount(cachedRooms[rc]);
         }
 
+        // create each creep role that is needed.
         var harvestersNeeded = totalHarvesterCapacity - harvesters.length;
         if (harvestersNeeded > 0) {
             var harvesterName = creepNames.HARVESTER_NAME + Game.time;
             console.log('Behold A New ' + creepNames.HARVESTER_NAME);
             Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], harvesterName, {memory: {role: roles.HARVESTER}});
+        }
+
+        if (upgraders.length < totalUpgraderCapacity) {
+            var upgraderName = creepNames.UPGRADER_NAME + Game.time;
+            console.log('Behold A New ' + creepNames.UPGRADER_NAME);
+            Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], upgraderName, {memory: {role: roles.UPGRADER}})
+        }
+
+        if (builders.length < totalBuilderCapacity) {
+            var builderName = creepNames.BUILDER_NAME + Game.time;
+            console.log('Behold A New ' + creepNames.BUILDER_NAME);
+            Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], builderName, {memory: {role: roles.BUILDER}})
         }
         /*
         get all creep types
@@ -47,20 +68,6 @@ var spawner = {
     }
 }
 
-function getOwnedRooms() {
-    var availableRooms = Game.rooms;
-    var ownedRooms = [];
-    
-    for (var seenRoom in availableRooms) {
-        if (availableRooms[seenRoom].controller.my) {
-            ownedRooms.push(availableRooms[seenRoom]);
-        }
-    }
-
-    Memory.ownedRooms = ownedRooms;
-    return ownedRooms;
-}
-
 function findNeededHarvesterAmount(rcId) {
     var currentRoom = rcId;
     var resourcesInRoom = currentRoom.find(FIND_SOURCES);
@@ -68,6 +75,13 @@ function findNeededHarvesterAmount(rcId) {
     var totalHarvesters = resourcesInRoom.length * 2;
 
     return totalHarvesters;
+}
+
+function findNeededUpgraderAmount(rcId) {
+    var currentRoom = rcId;
+    var roomControllerLevel = currentRoom.controller.level;
+
+    return roomControllerLevel;
 }
 
 function findSpacesAroundResource(resourcesInRoom) {
