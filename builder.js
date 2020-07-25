@@ -6,13 +6,16 @@
  * var mod = require('builder');
  * mod.thing == 'a thing'; // true
  */
-
+var utils = require("./utils");
 
 
 var roleBuilder = {
 
     //** param {Creep} creep */
     run: function(creep) {
+        if (!creep.memory.targetSourceId) {
+            utils.setCreepsTargetSource(creep);
+        }
 
         if (creep.memory.building && creep.store[RESOURCE_ENERGY] == 0) {
             creep.memory.building = false;

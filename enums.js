@@ -9,3 +9,7 @@ global.creepNames = Object.freeze({
     BUILDER_NAME: 'Builder',
     UPGRADER_NAME: 'Upgrader'
 });
+
+global.movement = Object.freeze({
+    NUM_OF_MOVEMENTS = 5
+});

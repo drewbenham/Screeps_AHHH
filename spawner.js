@@ -12,25 +12,18 @@ var spawner = {
         var builders = _.filter(allCreeps, (creep) => creep.memory.role == roles.BUILDER);
         
         // get all cached rooms. 
-        var roomsAvailable = Game.rooms;
-        var cachedRooms = [];
-        for (var roomName in roomsAvailable) {
-            var room = roomsAvailable[roomName];
-            if (room.memory.ownedRoom) {
-                cachedRooms.push(room)
-            }
-        }
+        var cachedRooms = Memory.ownedRooms;
 
         // find the total amount of each creep role we can handle
         var totalHarvesterCapacity = 0;
         var totalUpgraderCapacity = 0;
         var totalBuilderCapacity = 1;
 
-        for (var rc in cachedRooms) {
-            totalHarvesterCapacity = findNeededHarvesterAmount(cachedRooms[rc]);
+        for (var room in cachedRooms) {
+            totalHarvesterCapacity = findNeededHarvesterAmount(Game.rooms[cachedRooms[room]]);
         }
-        for (var rc in cachedRooms) {
-            totalUpgraderCapacity = findNeededUpgraderAmount(cachedRooms[rc]);
+        for (var room in cachedRooms) {
+            totalUpgraderCapacity = findNeededUpgraderAmount(Game.rooms[cachedRooms[room]]);
         }
 
         // create each creep role that is needed.
@@ -71,8 +64,9 @@ var spawner = {
     }
 }
 
-function findNeededHarvesterAmount(rcId) {
-    var currentRoom = rcId;
+//**@param {Room} room */
+function findNeededHarvesterAmount(room) {
+    var currentRoom = room;
     var resourcesInRoom = currentRoom.find(FIND_SOURCES);
     
     var totalHarvesters = resourcesInRoom.length * 2;
@@ -80,30 +74,12 @@ function findNeededHarvesterAmount(rcId) {
     return totalHarvesters;
 }
 
-function findNeededUpgraderAmount(rcId) {
-    var currentRoom = rcId;
+//**@param {Room} room */
+function findNeededUpgraderAmount(room) {
+    var currentRoom = room;
     var roomControllerLevel = currentRoom.controller.level;
 
     return roomControllerLevel;
-}
-
-function findSpacesAroundResource(resourcesInRoom) {
-    for (var foundSource in resourcesInRoom) {
-        var sourcePos = resourcesInRoom[foundSource].pos;
-
-        var lookAreaAroundSource = currentRoom.lookForAtArea(LOOK_TERRAIN, (sourcePos.y - 1), (sourcePos.x - 1), (sourcePos.y + 1), (sourcePos.x + 1), true);
-        for (var area in lookAreaAroundSource) {
-            const terrainAtArea = lookAreaAroundSource[area].terrain
-            switch(terrainAtArea) {
-                case 'wall':
-                    break;
-                case 'lava':
-                    break;
-                default:
-                    totalHarvesters++;
-            }
-        }
-    }
 }
 
 module.exports = spawner;
