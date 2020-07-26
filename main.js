@@ -107,9 +107,11 @@ module.exports.loop = function() {
             // get the creep from memory
             var creepToClean = Memory.creeps[name];
             //get the creeps source
-            var creepsSource = Game.getObjectById(creepToClean.targetSourceId);
-            //decrement the num of worker counter.
-            creepsSource.memory.currentNumOfWorkers--;
+            if (creepToClean.targetSourceId) {
+                var creepsSource = Game.getObjectById(creepToClean.targetSourceId);
+                //decrement the num of worker counter.
+                creepsSource.memory.currentNumOfWorkers--;
+            }
             delete Memory.creeps[name];
         }
     }
