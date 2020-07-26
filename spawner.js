@@ -1,11 +1,11 @@
 var Queue = require("./spawnQueue");
-const SpawnQueue = require("./spawnQueue");
 
 var spawner = {
 
     run: function() {
+        console.log("Entered Spawner");
         //get all creeps
-        var allCreeps = Game.creeps
+        var allCreeps = Game.creeps;
 
         //get creep types
         var harvesters = _.filter(allCreeps, (creep) => creep.memory.role == roles.HARVESTER);
@@ -36,25 +36,49 @@ var spawner = {
         for (var spawn in Game.spawns) {
             var currentSpawn = Game.spawns[spawn];
             var spawnQueue = Memory.spawnQueue;
-            
-            var currentQueue = new SpawnQueue(spawnQueue);
-            var nextInQueue = currentQueue.peek();
-            if (nextInQueue) {
-                if (!currentSpawn.spawning) {
-                    let harvesterCrit = (nextInQueue == roles.HARVESTER) && (harvesters.length < totalHarvesterCapacity);
-                    let upgraderCrit = (nextInQueue == roles.UPGRADER) && (upgraders.length < totalUpgraderCapacity);
-                    let builderCrit = (nextInQueue == roles.BUILDER) && (builders.length < totalBuilderCapacity);
-                    let repairerCrit = (nextInQueue == roles.REPAIRER) && (repairers.length < totalRepairerCapacity);
-                    let wallRepairerCrit = (nextInQueue == roles.WALL_REPAIRER) && (wallRepairers.length < totalWallRepairerCapacity);
 
-                    let needNewCreep = harvesterCrit || upgraderCrit || builderCrit || repairerCrit || wallRepairerCrit;
+            if (!spawnQueue) {
+                console.log("creating spawnQueue");
+                var neededQueue = [];
+                for (let i = 0;  i <= (totalHarvesterCapacity - harvesters.length); i++) {
+                    neededQueue.push(roles.HARVESTER);
+                }
+                for (let i = 0; i <= (totalUpgraderCapacity - upgraders.length); i++) {
+                    neededQueue.push(roles.UPGRADER);
+                }
+                for (let i = 0; i <= (totalBuilderCapacity - builders.length); i++) {
+                    neededQueue.push(roles.BUILDER);
+                }
+                for (let i = 0; i <= (totalRepairerCapacity - repairers.length); i++) {
+                    neededQueue.push(roles.REPAIRER);
+                }
+                for (let i = 0; i <= (totalWallRepairerCapacity - wallRepairers.length); i++) {
+                    neededQueue.push(roles.WALL_REPAIRER);
+                }
+    
+                Memory.spawnQueue = neededQueue;
+            }
 
-                    if (needNewCreep) {
-                        nextInQueue = currentQueue.dequeue();
+            let harvesterCrit = (harvesters.length < totalHarvesterCapacity);
+            let upgraderCrit = (upgraders.length < totalUpgraderCapacity);
+            let builderCrit = (builders.length < totalBuilderCapacity);
+            let repairerCrit = (repairers.length < totalRepairerCapacity);
+            let wallRepairerCrit = (wallRepairers.length < totalWallRepairerCapacity);
+
+            let needNewCreep = harvesterCrit || upgraderCrit || builderCrit || repairerCrit || wallRepairerCrit;
+            if (needNewCreep) {
+                var nextInQueue = spawnQueue[0];
+                if (nextInQueue) {
+                    if (!currentSpawn.spawning) {
                         var creepName = getRoleName(nextInQueue) + Game.time;
-                        Game.spawns[currentSpawn].spawnCreep([WORK, CARRY, MOVE], creepName, {memory: {role: nextInQueue, ticksNotMoved: 0,  working: true}})
-                    }
-                } 
+                        var spawnResult = currentSpawn.spawnCreep([WORK, CARRY, MOVE], creepName, {memory: {role: nextInQueue, ticksNotMoved: 0,  working: true}});
+                        if (spawnResult == 0) {
+                            console.log("making creep");
+                            spawnQueue.shift();
+                            Memory.spawnQueue = spawnQueue;
+                        }
+                    } 
+                }
             }
         }
     }
@@ -100,10 +124,20 @@ function findWallRepairerAmount(room) {
 
 function getRoleName(role) {
     var roleName = undefined;
-    for (var name in roles) {
-        if (role == name) {
-            roleName = name;
-        }
+    if (role == roles.HARVESTER) {
+        roleName = creepNames.HARVESTER_NAME;
+    }
+    else if (role == roles.UPGRADER) {
+        roleName = creepNames.UPGRADER_NAME;
+    }
+    else if (role == roles.BUILDER) {
+        roleName = creepNames.BUILDER_NAME;
+    }
+    else if (role == roles.REPAIRER) {
+        roleName = creepNames.REPAIRER_NAME;
+    }
+    else if (role == roles.WALL_REPAIRER) {
+        roleName = creepNames.WALL_REPAIRER_NAME;
     }
     return roleName;
 }

@@ -13,6 +13,7 @@ var roleBuilder = {
 
     //** param {Creep} creep */
     run: function(creep) {
+        console.log("Entered Builder");
         if (!creep.memory.targetSourceId) {
             utils.setCreepsTargetSource(creep);
         }
@@ -27,7 +28,7 @@ var roleBuilder = {
         }
 
         if (creep.memory.working) {
-            var targets = creep.room.find(FIND_MY_CONSTRUCTION_SITES);
+            var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
             if (targets.length) {
                 if (creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
                     utils.moveChoices(creep, targets[0], COLOR_RED);

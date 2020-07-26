@@ -6,6 +6,7 @@ var roleHarvester = {
 
     //**@param {Creep} creep */
     run: function(creep) {
+        console.log("Entered Harvester");
         if (!creep.memory.targetSourceId) {
             utils.setCreepsTargetSource(creep);
         }

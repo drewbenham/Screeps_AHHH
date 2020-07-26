@@ -36,8 +36,6 @@ Object.defineProperty(Source.prototype, 'memory', {
 persistentMemory.setOwnedRooms();
 //set num of workers that can work at each source.
 persistentMemory.setWorkersPerSource();
-// create spawnQueue.
-persistentMemory.setSpawnQueue();
 
 module.exports.loop = function() {
     // remove dead creeps and handle their memory.
@@ -47,12 +45,12 @@ module.exports.loop = function() {
 
     var cachedRooms = Memory.ownedRooms;
     // run tower roles.
-    for (let room of cachedRooms) {
-        var towers = Game.room[cachedRooms[room]].find(FIND_STRUCTURES, {
+    for (var room in cachedRooms) {
+        var towers = Game.rooms[cachedRooms[room]].find(FIND_STRUCTURES, {
             filter: (struct) => struct.structureType == STRUCTURE_TOWER
         });
-
-        for (let tower of towers) {
+        console.log(towers);
+        for (var tower in towers) {
             towerStruct.run(tower);
         }
     }

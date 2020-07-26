@@ -4,6 +4,7 @@ var roleRepairer = require("./repairer");
 var roleWallRepairer = {
     //** param {Creep} creep */
     run: function(creep) {
+        console.log("Entered WallRepairer");
         if (!creep.memory.targetSourceId) {
             utils.setCreepsTargetSource(creep);
         }
@@ -23,14 +24,14 @@ var roleWallRepairer = {
                 filter: (struct) => (struct.structureType == STRUCTURE_WALL)
             });
 
-            var lowestHealthWalls = undefined;
+            var lowestHealthWall = undefined;
 
             // find the wall that has the least amout of health.
             for (let percentage = 0.001; percentage <= 1; percentage += 0.001) {
                 lowestHealthWall = creep.pos.findClosestByPath(walls, {
-                    filter: (wall) => wall.hits / wall.hitsMax < percentage
+                    filter: (wall) => (wall.hits / wall.hitsMax) < percentage
                 });
-                if (lowestHealthWalls) {
+                if (lowestHealthWall) {
                     break;
                 }
             }
@@ -40,7 +41,7 @@ var roleWallRepairer = {
                     utils.moveChoices(creep, lowestHealthWall, COLOR_YELLOW);
                 }
             }
-            
+
             else {
                 roleRepairer.run(creep);
             }

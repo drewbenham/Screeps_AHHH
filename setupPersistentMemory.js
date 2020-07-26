@@ -1,4 +1,6 @@
 var SpawnQueue = require("./spawnQueue");
+var utils = require("./utils");
+var enums = require("./enums");
 
 var persistentMemory = {
 
@@ -44,14 +46,6 @@ var persistentMemory = {
                     source.memory.pathFromSpawn = path;
                 }
             }   
-        }
-    },
-
-    setSpawnQueue: function() {
-        var spawnQueue = Memory.spawnQueue;
-        
-        if (!spawnQueue) {
-            Memory.spawnQueue = new SpawnQueue();
         }
     }
 }
