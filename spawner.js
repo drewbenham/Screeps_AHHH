@@ -17,7 +17,7 @@ var spawner = {
         // find the total amount of each creep role we can handle
         var totalHarvesterCapacity = 0;
         var totalUpgraderCapacity = 0;
-        var totalBuilderCapacity = 1;
+        var totalBuilderCapacity = 2;
 
         for (var room in cachedRooms) {
             totalHarvesterCapacity = findNeededHarvesterAmount(Game.rooms[cachedRooms[room]]);

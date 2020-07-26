@@ -19,13 +19,13 @@ var roleUpgrader = {
         if (creep.memory.upgrading) {
             var roomController = creep.room.controller;
             if (creep.upgradeController(roomController) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(roomController, {visualizePathStyle: {stroke: '#ff0000'}});
+                utils.moveChoices(creep, roomController, COLOR_RED);
             }
         }
         else {
-            var source = creep.room.find(FIND_SOURCES);
-            if (creep.harvest(source[0]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source[0], {visualizePathStyle: {stroke: '#008000'}});
+            var source = Game.getObjectById(creep.memory.targetSourceId)
+            if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+                utils.moveChoices(creep, source, COLOR_RED);
             }
         }
     }

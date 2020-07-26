@@ -30,14 +30,14 @@ var roleBuilder = {
             var targets = creep.room.find(FIND_MY_CONSTRUCTION_SITES);
             if (targets.length) {
                 if (creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#008000'}});
+                    utils.moveChoices(creep, targets[0], COLOR_RED);
                 }
             }
         }
         else {
-            var sources = creep.room.find(FIND_SOURCES);
-            if (creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources[0], {visualizePathStyle: {stroke: '#ff0000'}});
+            var sources = Game.getObjectById(creep.memory.targetSourceId)
+            if (creep.harvest(sources) == ERR_NOT_IN_RANGE) {
+                utils.moveChoices(creep, sources, COLOR_RED);
             }
         }
     }
