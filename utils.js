@@ -30,14 +30,16 @@ var utils = {
     },
 
     setCreepsTargetSource: function(creep) {
-        var openSources = creep.room.find(FIND_SOURCES, {
-            filter: function(source) {
-                return source.memory.currentNumOfWorkers < source.memory.maxWorkers;
-            }
-        });
-        if (openSources.length > 0) {
+        var allSources = creep.room.find(FIND_SOURCES);
+        var openSources = _.filter(allSources, (source) => source.memory.currentNumOfWorkers < source.memory.maxWorkers);
+        if ((openSources.length) > 0 && ((creep.memory.role == roles.HARVESTER) || (creep.memory.role == roles.REPAIRER))) {
             creep.memory.targetSourceId = openSources[0].id;
             openSources[0].memory.currentNumOfWorkers++;
+        }
+        else {
+            let closestSource = creep.pos.findClosestByRange(allSources);
+            creep.memory.targetSourceId == closestSource.id;
+            closestSource.memory.currentNumOfWorkers++;
         }
     },
 
@@ -64,9 +66,28 @@ var utils = {
                 creep.memory.ticksNotMoved = 0;
             }
         }
-    }
+    },
 
     //TODO: write another move function that moves by path.
+
+    cleanUpMemory: function() {
+        for (var name in Memory.creeps) {
+            if (!Game.creeps[name]) {
+                // get the creep from memory
+                var creepToClean = Memory.creeps[name];
+                //get the creeps source
+                if (creepToClean.targetSourceId) {
+                    var creepsSource = Game.getObjectById(creepToClean.targetSourceId);
+                    //decrement the num of worker counter.
+                    creepsSource.memory.currentNumOfWorkers--;
+                }
+                var spawnQueue = Memory.spawnQueue;
+                spawnQueue.enqueue(creep.memory.role);
+
+                delete Memory.creeps[name];
+            }
+        }
+    }
 }
 
 module.exports = utils;

@@ -10,7 +10,7 @@ var roleHarvester = {
             utils.setCreepsTargetSource(creep);
         }
 
-        var target = creep.room.find(FIND_STRUCTURES, {
+        var target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
             filter: (structure) => {
                 return (structure.structureType == STRUCTURE_EXTENSION ||
                     structure.structureType == STRUCTURE_SPAWN) &&
@@ -29,9 +29,9 @@ var roleHarvester = {
         }
 
         else {
-            if (target.length > 0) {
-                if (creep.transfer(target[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    utils.moveChoices(creep, target[0], COLOR_GREEN);
+            if (target) {
+                if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    utils.moveChoices(creep, target, COLOR_GREEN);
                 }
             }
         }
