@@ -57,6 +57,14 @@ function setWorkersPerSource() {
                 source.memory.maxWorkers = utils.findSpacesAroundResource(source, room);
                 // initialize the num of workers to 0.
                 source.memory.currentNumOfWorkers = 0;
+                // set the path from the spawn to this source.
+                var spawners = room.find(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                        return (structure.structureType == STRUCTURE_SPAWN);
+                    }
+                });
+                const path = room.findPath(spawners[0].pos, source.pos);
+                source.memory.pathFromSpawn = path;
             }
         }   
     }
@@ -97,7 +105,7 @@ module.exports.loop = function() {
     for (var name in Memory.creeps) {
         if (!Game.creeps[name]) {
             // get the creep from memory
-            var creepToClean = Game.creeps[name];
+            var creepToClean = Memory.creeps[name];
             //get the creeps source
             var creepsSource = Game.getObjectById(creepToClean.targetSourceId);
             //decrement the num of worker counter.
