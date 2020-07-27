@@ -1,9 +1,7 @@
-var Queue = require("./spawnQueue");
 
 var spawner = {
 
     run: function() {
-        console.log("Entered Spawner");
         //get all creeps
         var allCreeps = Game.creeps;
 
@@ -36,7 +34,6 @@ var spawner = {
         for (var spawn in Game.spawns) {
             var currentSpawn = Game.spawns[spawn];
             var spawnQueue = Memory.spawnQueue;
-
             if (!spawnQueue) {
                 console.log("creating spawnQueue");
                 var neededQueue = [];

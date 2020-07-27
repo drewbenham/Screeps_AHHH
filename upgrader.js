@@ -4,7 +4,6 @@ var roleUpgrader = {
     
     //** param {Creep} creep*/
     run: function(creep) {
-        console.log("Entered Upgrader");
         if (!creep.memory.targetSourceId) {
             utils.setCreepsTargetSource(creep);
         }

@@ -4,7 +4,7 @@ var roleRepairer = require("./repairer");
 var roleWallRepairer = {
     //** param {Creep} creep */
     run: function(creep) {
-        console.log("Entered WallRepairer");
+
         if (!creep.memory.targetSourceId) {
             utils.setCreepsTargetSource(creep);
         }

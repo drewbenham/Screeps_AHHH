@@ -6,7 +6,6 @@ var roleHarvester = {
 
     //**@param {Creep} creep */
     run: function(creep) {
-        console.log("Entered Harvester");
         if (!creep.memory.targetSourceId) {
             utils.setCreepsTargetSource(creep);
         }
@@ -18,11 +17,11 @@ var roleHarvester = {
                     structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
             }
         });
-        if (target.length == 0) {
+        if (!target) {
             roleUpgrader.run(creep);
         }
 
-        if (creep.store.getFreeCapacity() > 0) {
+        if ((creep.store.getFreeCapacity() > 0) && target) {
             var source = Game.getObjectById(creep.memory.targetSourceId)
             if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
                 utils.moveChoices(creep, source, COLOR_RED);

@@ -32,14 +32,14 @@ var utils = {
     setCreepsTargetSource: function(creep) {
         var allSources = creep.room.find(FIND_SOURCES);
         var openSources = _.filter(allSources, (source) => source.memory.currentNumOfWorkers < source.memory.maxWorkers);
+        var leastNumOfWorkers = _.min(allSources, (source) => source.memory.currentNumOfWorkers);
         if (openSources.length > 0) {
             creep.memory.targetSourceId = openSources[0].id;
             openSources[0].memory.currentNumOfWorkers++;
         }
         else {
-            let closestSource = creep.pos.findClosestByRange(allSources);
-            creep.memory.targetSourceId = closestSource.id;
-            closestSource.memory.currentNumOfWorkers++;
+            creep.memory.targetSourceId = leastNumOfWorkers.id;
+            leastNumOfWorkers.memory.currentNumOfWorkers++;
         }
     },
 
@@ -83,7 +83,7 @@ var utils = {
                 }
                 var spawnQueue = Memory.spawnQueue;
                 if (spawnQueue) {          
-                    spawnQueue.append(creepToClean.role);
+                    spawnQueue.push(creepToClean.role);
                     Memory.spawnQueue = spawnQueue;
                 }
 

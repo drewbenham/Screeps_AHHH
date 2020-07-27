@@ -49,7 +49,6 @@ module.exports.loop = function() {
         var towers = Game.rooms[cachedRooms[room]].find(FIND_STRUCTURES, {
             filter: (struct) => struct.structureType == STRUCTURE_TOWER
         });
-        console.log(towers);
         for (var tower in towers) {
             towerStruct.run(tower);
         }

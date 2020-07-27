@@ -13,7 +13,6 @@ var roleBuilder = {
 
     //** param {Creep} creep */
     run: function(creep) {
-        console.log("Entered Builder");
         if (!creep.memory.targetSourceId) {
             utils.setCreepsTargetSource(creep);
         }

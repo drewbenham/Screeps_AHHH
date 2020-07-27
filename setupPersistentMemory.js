@@ -1,4 +1,3 @@
-var SpawnQueue = require("./spawnQueue");
 var utils = require("./utils");
 var enums = require("./enums");
 
