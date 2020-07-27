@@ -17,17 +17,17 @@ var roleBuilder = {
             utils.setCreepsTargetSource(creep);
         }
 
-        if (creep.memory.building && creep.store[RESOURCE_ENERGY] == 0) {
-            creep.memory.building = false;
+        if (creep.memory.working && creep.store[RESOURCE_ENERGY] == 0) {
+            creep.memory.working = false;
             creep.say("gotta suk");
         }
-        if (!creep.memory.building && creep.store.getFreeCapacity() == 0) {
-            creep.memory.building = true;
+        if (!creep.memory.working && creep.store.getFreeCapacity() == 0) {
+            creep.memory.working = true;
             creep.say("build it");
         }
 
-        if (creep.memory.building) {
-            var targets = creep.room.find(FIND_MY_CONSTRUCTION_SITES);
+        if (creep.memory.working) {
+            var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
             if (targets.length) {
                 if (creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
                     utils.moveChoices(creep, targets[0], COLOR_RED);

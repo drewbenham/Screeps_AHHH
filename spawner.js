@@ -1,15 +1,16 @@
 
-
 var spawner = {
 
     run: function() {
         //get all creeps
-        var allCreeps = Game.creeps
+        var allCreeps = Game.creeps;
 
         //get creep types
         var harvesters = _.filter(allCreeps, (creep) => creep.memory.role == roles.HARVESTER);
         var upgraders = _.filter(allCreeps, (creep) => creep.memory.role == roles.UPGRADER);
         var builders = _.filter(allCreeps, (creep) => creep.memory.role == roles.BUILDER);
+        var repairers = _.filter(allCreeps, (creep) => creep.memory.role == roles.REPAIRER);
+        var wallRepairers = _.filter(allCreeps, (creep) => creep.memory.role == roles.WALL_REPAIRER);
         
         // get all cached rooms. 
         var cachedRooms = Memory.ownedRooms;
@@ -17,57 +18,72 @@ var spawner = {
         // find the total amount of each creep role we can handle
         var totalHarvesterCapacity = 0;
         var totalUpgraderCapacity = 0;
-        var totalBuilderCapacity = 2;
+        var totalBuilderCapacity = 0;
+        var totalRepairerCapacity = 0;
+        var totalWallRepairerCapacity = 0;
 
         for (var room in cachedRooms) {
-            totalHarvesterCapacity = findNeededHarvesterAmount(Game.rooms[cachedRooms[room]]);
+            let currentRoom = Game.rooms[cachedRooms[room]];
+            totalHarvesterCapacity = findHarvesterAmount(currentRoom);
+            totalUpgraderCapacity = findUpgraderAmount(currentRoom);
+            totalBuilderCapacity = findBuilderAmount(currentRoom);
+            totalRepairerCapacity = findRepairerAmount(currentRoom);
+            totalWallRepairerCapacity = findWallRepairerAmount(currentRoom);
         }
-        for (var room in cachedRooms) {
-            totalUpgraderCapacity = findNeededUpgraderAmount(Game.rooms[cachedRooms[room]]);
+
+        for (var spawn in Game.spawns) {
+            var currentSpawn = Game.spawns[spawn];
+            var spawnQueue = Memory.spawnQueue;
+            if (!spawnQueue) {
+                console.log("creating spawnQueue");
+                var neededQueue = [];
+                for (let i = 0;  i <= (totalHarvesterCapacity - harvesters.length); i++) {
+                    neededQueue.push(roles.HARVESTER);
+                }
+                for (let i = 0; i <= (totalUpgraderCapacity - upgraders.length); i++) {
+                    neededQueue.push(roles.UPGRADER);
+                }
+                for (let i = 0; i <= (totalBuilderCapacity - builders.length); i++) {
+                    neededQueue.push(roles.BUILDER);
+                }
+                for (let i = 0; i <= (totalRepairerCapacity - repairers.length); i++) {
+                    neededQueue.push(roles.REPAIRER);
+                }
+                for (let i = 0; i <= (totalWallRepairerCapacity - wallRepairers.length); i++) {
+                    neededQueue.push(roles.WALL_REPAIRER);
+                }
+    
+                Memory.spawnQueue = neededQueue;
+            }
+
+            let harvesterCrit = (harvesters.length < totalHarvesterCapacity);
+            let upgraderCrit = (upgraders.length < totalUpgraderCapacity);
+            let builderCrit = (builders.length < totalBuilderCapacity);
+            let repairerCrit = (repairers.length < totalRepairerCapacity);
+            let wallRepairerCrit = (wallRepairers.length < totalWallRepairerCapacity);
+
+            let needNewCreep = harvesterCrit || upgraderCrit || builderCrit || repairerCrit || wallRepairerCrit;
+            if (needNewCreep) {
+                var nextInQueue = spawnQueue[0];
+                if (nextInQueue) {
+                    if (!currentSpawn.spawning) {
+                        var creepName = getRoleName(nextInQueue) + Game.time;
+                        var spawnResult = currentSpawn.spawnCreep([WORK, CARRY, MOVE], creepName, {memory: {role: nextInQueue, ticksNotMoved: 0,  working: true}});
+                        if (spawnResult == 0) {
+                            console.log("making creep");
+                            spawnQueue.shift();
+                            Memory.spawnQueue = spawnQueue;
+                        }
+                    } 
+                }
+            }
         }
-
-        // create each creep role that is needed.
-        var startingSpawn = Game.spawns['Spawn1'];
-        if (!startingSpawn.spawning) {
-            if (upgraders.length < totalUpgraderCapacity) {
-                var upgraderName = creepNames.UPGRADER_NAME + Game.time;
-                console.log('Behold A New ' + creepNames.UPGRADER_NAME);
-                Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], upgraderName, {memory: {role: roles.UPGRADER, ticksNotMoved: 0,  upgrading: true}})
-            }
-
-            if (builders.length < totalBuilderCapacity) {
-                var builderName = creepNames.BUILDER_NAME + Game.time;
-                console.log('Behold A New ' + creepNames.BUILDER_NAME);
-                Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], builderName, {memory: {role: roles.BUILDER, ticksNotMoved: 0, building: true}})
-            }
-
-            var harvestersNeeded = totalHarvesterCapacity - harvesters.length;
-            if (harvestersNeeded > 0) {
-                var harvesterName = creepNames.HARVESTER_NAME + Game.time;
-                console.log('Behold A New ' + creepNames.HARVESTER_NAME);
-                Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], harvesterName, {memory: {role: roles.HARVESTER, ticksNotMoved: 0, upgrading: true}});
-            }
-        }   
-        /*
-        get all creep types
-        determine how many you need total:
-            -- harvesters = # of spaces around resources?
-            -- upgraders = RCL * 2 maybe
-            -- builders = # of structures / # rounded up
-
-        determine highest priority of out of creep type and how many needed
-        get what type of creep to be created:
-            -- get the amount of resources available.
-                --based on #of resources and creep type select modules needed (strategy pattern)
-        build creep;
-        */
     }
 }
 
 //**@param {Room} room */
-function findNeededHarvesterAmount(room) {
-    var currentRoom = room;
-    var resourcesInRoom = currentRoom.find(FIND_SOURCES);
+function findHarvesterAmount(room) {
+    var resourcesInRoom = room.find(FIND_SOURCES);
     
     var totalHarvesters = resourcesInRoom.length * 2;
 
@@ -75,11 +91,52 @@ function findNeededHarvesterAmount(room) {
 }
 
 //**@param {Room} room */
-function findNeededUpgraderAmount(room) {
-    var currentRoom = room;
-    var roomControllerLevel = currentRoom.controller.level;
+function findUpgraderAmount(room) {
+    var roomControllerLevel = room.controller.level;
 
     return roomControllerLevel;
+}
+
+function findBuilderAmount(room) {
+    var constructionSites = room.find(FIND_MY_CONSTRUCTION_SITES);
+
+    return Math.ceil(constructionSites.length * 0.1);
+}
+
+function findRepairerAmount(room) {
+    var structures = room.find(FIND_STRUCTURES, {
+        filter: (struct) => (struct.hits < struct.hitsMax) && (struct.structureType != STRUCTURE_WALL)
+    });
+
+    return Math.ceil(structures.length * 0.1);
+}
+
+function findWallRepairerAmount(room) {
+    var walls = room.find(FIND_STRUCTURES, {
+        filter: (struct) => (struct.structureType == STRUCTURE_WALL)
+    });
+
+    return Math.ceil(walls.length * 0.1);
+}
+
+function getRoleName(role) {
+    var roleName = undefined;
+    if (role == roles.HARVESTER) {
+        roleName = creepNames.HARVESTER_NAME;
+    }
+    else if (role == roles.UPGRADER) {
+        roleName = creepNames.UPGRADER_NAME;
+    }
+    else if (role == roles.BUILDER) {
+        roleName = creepNames.BUILDER_NAME;
+    }
+    else if (role == roles.REPAIRER) {
+        roleName = creepNames.REPAIRER_NAME;
+    }
+    else if (role == roles.WALL_REPAIRER) {
+        roleName = creepNames.WALL_REPAIRER_NAME;
+    }
+    return roleName;
 }
 
 module.exports = spawner;
