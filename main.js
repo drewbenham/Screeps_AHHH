@@ -50,7 +50,8 @@ module.exports.loop = function() {
             filter: (struct) => struct.structureType == STRUCTURE_TOWER
         });
         for (var tower in towers) {
-            towerStruct.run(tower);
+            var currentTower = towers[tower];
+            towerStruct.run(currentTower);
         }
     }
     

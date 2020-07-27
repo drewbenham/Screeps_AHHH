@@ -2,7 +2,6 @@ var towerStruct = {
 
     //**param {StructureTower} towerStruct */
     run: function(tower) {
-        console.log("Entered Tower");
         // get the lowest health structure
         var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => structure.hits < structure.hitsMax
