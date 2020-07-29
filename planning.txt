@@ -1,0 +1,33 @@
+============================
+SPAWNING LOOP
+============================
+
+1. find if we can spawn (energy / already spawning)
+
+2. find what we need to spawn and how many:
+
+2. decide what is the most important to spawn. 
+    priority:
+        if hostiles present:
+            defender
+        else if low on resources and there currently is an open mining spot:
+            harvester/miner.
+        else if 
+
+1: 
+    if !spawner.spawning and energy > threshold:
+
+2:
+    # of miners = # of open mining spots (open containers)
+    
+    if # of upgraders < 1:
+        needUpgrader = true
+    
+    if # of constructionsites  < 10 
+        builders = 1;
+    else 
+        builders = # of constructionsites * 0.1 rounded down
+
+    
+    
+    
