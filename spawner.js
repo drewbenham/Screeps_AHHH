@@ -29,26 +29,27 @@ var spawner = {
                 buildersNeeded = findBuilderAmount(currentRoom, builders.length);
                 repairersNeeded = findRepairerAmount(currentRoom, repairers.length);
                 wallRepairersNeeded = findWallRepairerAmount(currentRoom, wallRepairers.length);
+                console.log(harvestersNeeded + " " + upgradersNeeded + " " + buildersNeeded + " " + repairersNeeded + " " + wallRepairersNeeded);
 
                 if (harvestersNeeded > 0) {
                     var creepName = creepNames.HARVESTER_NAME + Game.time;
-                    var spawnResult = currentSpawn.spawnCreep([WORK, CARRY, MOVE], creepName, {memory: {role: nextInQueue, ticksNotMoved: 0,  working: true}});
+                    var spawnResult = currentSpawn.spawnCreep([WORK, CARRY, MOVE], creepName, {memory: {role: roles.HARVESTER, ticksNotMoved: 0,  working: true}});
                 }
                 else if (buildersNeeded > 0) {
                     var creepName = creepNames.BUILDER_NAME + Game.time;
-                    var spawnResult = currentSpawn.spawnCreep([WORK, CARRY, MOVE], creepName, {memory: {role: nextInQueue, ticksNotMoved: 0,  working: true}});
+                    var spawnResult = currentSpawn.spawnCreep([WORK, CARRY, MOVE], creepName, {memory: {role: roles.BUILDER, ticksNotMoved: 0,  working: true}});
                 }
                 else if (repairersNeeded > 0) {
                     var creepName = creepNames.REPAIRER_NAME + Game.time;
-                    var spawnResult = currentSpawn.spawnCreep([WORK, CARRY, MOVE], creepName, {memory: {role: nextInQueue, ticksNotMoved: 0,  working: true}});
+                    var spawnResult = currentSpawn.spawnCreep([WORK, CARRY, MOVE], creepName, {memory: {role: roles.REPAIRER, ticksNotMoved: 0,  working: true}});
                 }
                 else if (wallRepairersNeeded > 0) {
                     var creepName = creepNames.WALL_REPAIRER_NAME + Game.time;
-                    var spawnResult = currentSpawn.spawnCreep([WORK, CARRY, MOVE], creepName, {memory: {role: nextInQueue, ticksNotMoved: 0,  working: true}});
+                    var spawnResult = currentSpawn.spawnCreep([WORK, CARRY, MOVE], creepName, {memory: {role: roles.WALL_REPAIRER, ticksNotMoved: 0,  working: true}});
                 }
                 else if (upgradersNeeded > 0) {
                     var creepName = creepNames.UPGRADER_NAME + Game.time;
-                    var spawnResult = currentSpawn.spawnCreep([WORK, CARRY, MOVE], creepName, {memory: {role: nextInQueue, ticksNotMoved: 0,  working: true}});
+                    var spawnResult = currentSpawn.spawnCreep([WORK, CARRY, MOVE], creepName, {memory: {role: roles.UPGRADER, ticksNotMoved: 0,  working: true}});
                 }
             }
         }
@@ -57,15 +58,15 @@ var spawner = {
 
 //**@param {Room} room */
 function findHarvesterAmount(room, currentHarvesters) {
-    var resourcesInRoom = room.memory.sources.length;
+    var resourcesInRoom = Object.keys(room.memory.sources).length;
     var needed = resourcesInRoom - currentHarvesters;
     return (needed >= 0 ? needed : 0);
 }
 
 //**@param {Room} room */
 function findUpgraderAmount(room, currentUpgraders) {
-    var roomControllerLevel = Math.ceil(room.controller.level / 2);
-    var needed = roomControllerLevel - currentUpgraders.length;
+    var roomControllerLevel = Math.ceil(room.controller.level / 2.0);
+    var needed = roomControllerLevel - currentUpgraders;
     return (needed >= 0 ? needed : 0);
 }
 
@@ -73,7 +74,7 @@ function findBuilderAmount(room, currentUpgraders) {
     var constructionSites = room.find(FIND_MY_CONSTRUCTION_SITES);
     let buildersNeeded = 0;
     if (!constructionSites) {
-        break;
+        return buildersNeeded;
     }
     else if (constructionSites.length < 10) {
         buildersNeeded = 1;
@@ -92,7 +93,7 @@ function findRepairerAmount(room, currentRepairers) {
     });
     let repairersNeeded = 0;
     if (!structures) {
-        break;
+        return repairersNeeded;
     }
     else if (structures.length < 10) {
         repairersNeeded = 1;
@@ -110,13 +111,13 @@ function findWallRepairerAmount(room, currentWallRepairers) {
     });
     let wallRepairersNeeded = 0;
     if (!walls) {
-        break;
+        return wallRepairersNeeded;
     }
     else if (walls.length < 10) {
-        repairersNeeded = 1;
+        wallRepairersNeeded = 1;
     }
     else {
-        repairersNeeded = Math.floor(walls.length / 10);
+        wallRepairersNeeded = Math.floor(walls.length / 10);
     }
 
     var needed = wallRepairersNeeded - currentWallRepairers;
