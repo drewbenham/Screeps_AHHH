@@ -81,11 +81,6 @@ var utils = {
                     //decrement the num of worker counter.
                     creepsSource.memory.currentNumOfWorkers--;
                 }
-                var spawnQueue = Memory.spawnQueue;
-                if (spawnQueue) {          
-                    spawnQueue.push(creepToClean.role);
-                    Memory.spawnQueue = spawnQueue;
-                }
 
                 delete Memory.creeps[name];
             }
