@@ -29,5 +29,35 @@ SPAWNING LOOP
         builders = # of constructionsites * 0.1 rounded down
 
     
-    
+=============================
+CREEP BEST BODIES
+=============================
+Miner:
+    5 work, 1 move
+    .83,    0.16
+
+Harvester:
+    5 work, 4 carry, 4 move
+    .42,    .25,     .33
+
+Builder:
+    5 work, 5 carry, 8 move
+    .28,    .28,     .44
+
+Repairer:
+    3 work, 5 carry, 7 move
+    .2,    .33,     .47
+
+Wall Repairer:
+    3 work, 2 carry, 4 move
+    .33,    .22,     .44
+
+//for each part do this to get the total amount of each part type.
+numOfPart = energyTotal / partCost
+(.83 * energyTotal) / work 
+
+
+
+
+
     
