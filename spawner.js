@@ -1,3 +1,4 @@
+require("./bestBod")();
 
 var spawner = {
 
@@ -5,8 +6,9 @@ var spawner = {
         for (var spawn in Game.spawns) {
             var currentSpawn = Game.spawns[spawn];
             var currentRoom = currentSpawn.room;
-
-            if (!currentSpawn.spawning) { 
+            //TODO: use this to decide how to spawn creep.
+            var roomEnergy = currentRoom.energyAvailable;
+            if (!currentSpawn.spawning && roomEnergy >= 300) { 
 
                 //get all creeps
                 var allCreeps = Game.creeps;
@@ -32,24 +34,20 @@ var spawner = {
                 console.log(harvestersNeeded + " " + upgradersNeeded + " " + buildersNeeded + " " + repairersNeeded + " " + wallRepairersNeeded);
 
                 if (harvestersNeeded > 0) {
-                    var creepName = creepNames.HARVESTER_NAME + Game.time;
-                    var spawnResult = currentSpawn.spawnCreep([WORK, CARRY, MOVE], creepName, {memory: {role: roles.HARVESTER, ticksNotMoved: 0,  working: true}});
+                    var spawnResult = currentSpawn.createBestCreep(roomEnergy, roles.HARVESTER);
+                    console.log(spawnResult);
                 }
                 else if (buildersNeeded > 0) {
-                    var creepName = creepNames.BUILDER_NAME + Game.time;
-                    var spawnResult = currentSpawn.spawnCreep([WORK, CARRY, MOVE], creepName, {memory: {role: roles.BUILDER, ticksNotMoved: 0,  working: true}});
+                    var spawnResult = currentSpawn.createBestCreep(roomEnergy, roles.BUILDER);
                 }
                 else if (repairersNeeded > 0) {
-                    var creepName = creepNames.REPAIRER_NAME + Game.time;
-                    var spawnResult = currentSpawn.spawnCreep([WORK, CARRY, MOVE], creepName, {memory: {role: roles.REPAIRER, ticksNotMoved: 0,  working: true}});
+                    var spawnResult = currentSpawn.createBestCreep(roomEnergy, roles.REPAIRER);
                 }
                 else if (wallRepairersNeeded > 0) {
-                    var creepName = creepNames.WALL_REPAIRER_NAME + Game.time;
-                    var spawnResult = currentSpawn.spawnCreep([WORK, CARRY, MOVE], creepName, {memory: {role: roles.WALL_REPAIRER, ticksNotMoved: 0,  working: true}});
+                    var spawnResult = currentSpawn.createBestCreep(roomEnergy, roles.WALL_REPAIRER);
                 }
                 else if (upgradersNeeded > 0) {
-                    var creepName = creepNames.UPGRADER_NAME + Game.time;
-                    var spawnResult = currentSpawn.spawnCreep([WORK, CARRY, MOVE], creepName, {memory: {role: roles.UPGRADER, ticksNotMoved: 0,  working: true}});
+                    var spawnResult = currentSpawn.createBestCreep(roomEnergy, roles.UPGRADER);
                 }
             }
         }
@@ -71,7 +69,7 @@ function findUpgraderAmount(room, currentUpgraders) {
 }
 
 function findBuilderAmount(room, currentUpgraders) {
-    var constructionSites = room.find(FIND_MY_CONSTRUCTION_SITES);
+    var constructionSites = room.find(FIND_CONSTRUCTION_SITES);
     let buildersNeeded = 0;
     if (!constructionSites) {
         return buildersNeeded;
@@ -80,7 +78,7 @@ function findBuilderAmount(room, currentUpgraders) {
         buildersNeeded = 1;
     }
     else {
-        buildersNeeded = Math.floor(constructionSites / 10);
+        buildersNeeded = Math.floor(constructionSites.length / 10.0);
     }
 
     var needed = buildersNeeded - currentUpgraders
@@ -122,26 +120,6 @@ function findWallRepairerAmount(room, currentWallRepairers) {
 
     var needed = wallRepairersNeeded - currentWallRepairers;
     return (needed >= 0 ? needed : 0);
-}
-
-function getRoleName(role) {
-    var roleName = undefined;
-    if (role == roles.HARVESTER) {
-        roleName = creepNames.HARVESTER_NAME;
-    }
-    else if (role == roles.UPGRADER) {
-        roleName = creepNames.UPGRADER_NAME;
-    }
-    else if (role == roles.BUILDER) {
-        roleName = creepNames.BUILDER_NAME;
-    }
-    else if (role == roles.REPAIRER) {
-        roleName = creepNames.REPAIRER_NAME;
-    }
-    else if (role == roles.WALL_REPAIRER) {
-        roleName = creepNames.WALL_REPAIRER_NAME;
-    }
-    return roleName;
 }
 
 module.exports = spawner;

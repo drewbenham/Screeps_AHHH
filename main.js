@@ -42,17 +42,12 @@ module.exports.loop = function() {
     utils.cleanUpMemory();
 
     spawner.run();
-
-    var cachedRooms = Memory.ownedRooms;
+    
     // run tower roles.
-    for (var room in cachedRooms) {
-        var towers = Game.rooms[cachedRooms[room]].find(FIND_STRUCTURES, {
-            filter: (struct) => struct.structureType == STRUCTURE_TOWER
-        });
-        for (var tower in towers) {
-            var currentTower = towers[tower];
-            towerStruct.run(currentTower);
-        }
+    var towers = _.filter(Game.structures, struct => struct.structureType == STRUCTURE_TOWER);
+    for (var tower in towers) {
+        var currentTower = towers[tower];
+        towerStruct.run(currentTower);
     }
     
     // run creep roles
