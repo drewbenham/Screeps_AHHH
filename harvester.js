@@ -21,7 +21,17 @@ var roleHarvester = {
             roleUpgrader.run(creep);
         }
 
-        if ((creep.store.getFreeCapacity() > 0) && target) {
+        if (creep.memory.working && creep.store[RESOURCE_ENERGY] == 0) {
+            creep.memory.working = false;
+            creep.say("gotta suk");
+        }
+
+        if (!creep.memory.working && creep.store.getFreeCapacity() == 0) {
+            creep.memory.working = true;
+            creep.say("build it");
+        }
+
+        if (!creep.memory.working) {
             var source = Game.getObjectById(creep.memory.targetSourceId)
             if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
                 utils.moveChoices(creep, source, COLOR_RED);
