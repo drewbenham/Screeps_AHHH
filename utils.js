@@ -81,6 +81,8 @@ var utils = {
                     //decrement the num of worker counter.
                     creepsSource.memory.currentNumOfWorkers--;
                 }
+                console.log('check Spawn')
+                Memory.checkSpawnQueue = true;
 
                 delete Memory.creeps[name];
             }

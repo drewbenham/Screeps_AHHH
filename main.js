@@ -36,6 +36,7 @@ Object.defineProperty(Source.prototype, 'memory', {
 persistentMemory.setOwnedRooms();
 //set num of workers that can work at each source.
 persistentMemory.setWorkersPerSource();
+Memory.checkSpawnQueue = true;
 
 module.exports.loop = function() {
     // remove dead creeps and handle their memory.
