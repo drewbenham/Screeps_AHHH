@@ -1,6 +1,7 @@
 //const { runInContext } = require("lodash")
 var roleUpgrader = require("./upgrader")
 var utils = require("./utils");
+var enums = require("./enums");
 
 var roleHarvester = {
 
@@ -34,14 +35,14 @@ var roleHarvester = {
         if (!creep.memory.working) {
             var source = Game.getObjectById(creep.memory.targetSourceId)
             if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                utils.moveChoices(creep, source, COLOR_RED);
+                utils.moveChoices(creep, source, coolColors.ORANGE);
             }
         }
 
         else {
             if (target) {
                 if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    utils.moveChoices(creep, target, COLOR_GREEN);
+                    utils.moveChoices(creep, target, coolColors.GREEN);
                 }
             }
         }

@@ -13,3 +13,10 @@ global.creepNames = Object.freeze({
     REPAIRER_NAME: 'BitchBoi',
     WALL_REPAIRER_NAME: 'BottomBitch'
 });
+
+global.coolColors = Object.freeze({
+    GREEN: "#00ff00",
+    PURE_PINK: "#ff0080",
+    YELLOW: "#ffff00",
+    ORANGE: "#ff8a14"
+});

@@ -7,7 +7,7 @@
  * mod.thing == 'a thing'; // true
  */
 var utils = require("./utils");
-
+var enums = require("./enums");
 
 var roleBuilder = {
 
@@ -30,14 +30,14 @@ var roleBuilder = {
             var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
             if (targets.length) {
                 if (creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
-                    utils.moveChoices(creep, targets[0], COLOR_RED);
+                    utils.moveChoices(creep, targets[0], coolColors.GREEN);
                 }
             }
         }
         else {
             var sources = Game.getObjectById(creep.memory.targetSourceId)
             if (creep.harvest(sources) == ERR_NOT_IN_RANGE) {
-                utils.moveChoices(creep, sources, COLOR_RED);
+                utils.moveChoices(creep, sources, coolColors.ORANGE);
             }
         }
     }
