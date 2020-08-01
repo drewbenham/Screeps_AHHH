@@ -1,4 +1,5 @@
 var utils = require("./utils");
+var enums = require("./enums");
 
 var roleUpgrader = {
     
@@ -19,13 +20,13 @@ var roleUpgrader = {
         if (creep.memory.working) {
             var roomController = creep.room.controller;
             if (creep.upgradeController(roomController) == ERR_NOT_IN_RANGE) {
-                utils.moveChoices(creep, roomController, COLOR_RED);
+                utils.moveChoices(creep, roomController, coolColors.ORANGE);
             }
         }
         else {
             var source = Game.getObjectById(creep.memory.targetSourceId)
             if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                utils.moveChoices(creep, source, COLOR_RED);
+                utils.moveChoices(creep, source, coolColors.GREEN);
             }
         }
     }

@@ -1,5 +1,6 @@
 var utils = require("./utils");
 var roleBuilder = require("./builder");
+var enums = require("./enums");
 
 var roleRepairer = {
     //** param {Creep} creep */
@@ -26,7 +27,7 @@ var roleRepairer = {
 
             if (needsRepair) {
                 if (creep.repair(needsRepair) == ERR_NOT_IN_RANGE) {
-                    utils.moveChoices(creep, needsRepair, COLOR_PURPLE);
+                    utils.moveChoices(creep, needsRepair, coolColors.PURE_PINK);
                 }
             }
             else {
@@ -36,7 +37,7 @@ var roleRepairer = {
         else {
             var sources = Game.getObjectById(creep.memory.targetSourceId)
             if (creep.harvest(sources) == ERR_NOT_IN_RANGE) {
-                utils.moveChoices(creep, sources, COLOR_RED);
+                utils.moveChoices(creep, sources, coolColors.ORANGE);
             }
         }
     }

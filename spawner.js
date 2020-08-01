@@ -100,10 +100,9 @@ var spawner = {
                     var currentSpawn = Game.spawns[spawn];
                     var currentRoom = currentSpawn.room;
 
-                    var totalEnergy = currentRoom.energyCapacityAvailable;
                     var currentEnergy = currentRoom.energyAvailable;
                     if (!currentSpawn.spawning && currentEnergy >= 300) {
-                        var spawnResult = currentSpawn.createBestCreep(totalEnergy, nextInQueue);
+                        var spawnResult = currentSpawn.createBestCreep(currentEnergy, nextInQueue);
                         console.log(spawnResult);
 
                         if (!spawnResult) {

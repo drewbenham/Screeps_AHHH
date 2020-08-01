@@ -38,26 +38,41 @@ function calculateCreep(energy, creepOptions) {
     } 
     // find the best ratio for creep type. 
     else {
-        //ratio cost will tell us how much each iteration of the ratio will cost
-        let ratioCost = 0;
+        //totalCostNeeded is the total cost of the ideal ratio of parts.
+        let totalCostNeeded = 0;
+        //go through each body part
         for (let bodyPart in creepOptions.body) {
+            //get the word for the part since js is dumb and
+            //for some reason "work" is the same as the constant
+            //used for WORK.
             let part = bodyPart.toLowerCase();
             for (let i = 0; i < creepOptions.body[bodyPart]; i++) {
-                ratioCost += BODYPART_COST[part];
+                //sum up the cost.
+                totalCostNeeded += BODYPART_COST[part];
             }
         }
 
-        //find the max amount of each part using ratio cost.
-        let maxUnits = Math.min((maxEnergy / ratioCost), 50 / _.sum(creepOptions.body), Math.floor(maxBodyParts / _.sum(creepOptions.body)));
+        //go through the parts again. 
+        //TODO: (maybe i can put this in the other loop)?
         for (let bodyPart in creepOptions.body) {
             let part = bodyPart.toLowerCase();
-            for (let i = 0; i < (maxUnits * creepOptions.body[bodyPart]); i++) {
-                if (BODYPART_COST[part] > maxEnergy) break;
+            //number of parts needed for the ratio
+            let numOfPart = creepOptions.body[bodyPart];
+            //get the total cost of that part for the whole.
+            let costRatio = numOfPart * BODYPART_COST[part];
+            //get the cost percentage of the whole for that part.
+            let partRatio = costRatio / totalCostNeeded;
+
+            //get the number of part ratio for that part.
+            let optimalParts = Math.floor((partRatio * energy) / BODYPART_COST[part]);
+            // make sure we add at least one of each part.
+            if (optimalParts < 1) optimalParts = 1;
+            for (let i = 0; i < optimalParts; i++) {
                 body.push(part);
-                maxEnergy -= BODYPART_COST[part];
             }
         }
     } 
+    console.log(body);
     return body;
 }
 
