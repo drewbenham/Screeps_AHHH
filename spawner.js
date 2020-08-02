@@ -13,6 +13,7 @@ var spawner = {
             var cachedRooms = Memory.ownedRooms;
             for (var room in cachedRooms) {
                 var currentRoom = Game.rooms[cachedRooms[room]];
+                var currentEnergy = currentRoom.energyAvailable;
 
                 //get all creeps
                 var allCreeps = Game.creeps;
@@ -40,51 +41,60 @@ var spawner = {
                 var exact = true;
                 // create the spawnQueue
                 for (let i = 0; i < harvestersNeeded; i++) {
-                    if (harvesters.length === 0)
-                        exact = false;
 
                     var idealHarvester = {ideal: exact, name: creepNames.HARVESTER_NAME, 
                         body: {WORK: 5, CARRY: 2, MOVE: 3},
                         memory: {role: roles.HARVESTER, ticksNotMoved: 0,  working: true}};
                     
+                    if (findIdealCost(idealHarvester) > currentEnergy) {
+                        idealHarvester.ideal = false;
+                    }
+                    
                     spawnQueue.push(idealHarvester);
                 }
                 for (let i = 0; i < buildersNeeded; i++) {
-                    if (builders.length === 0)
-                        exact = false;
                     var idealBuilder = {ideal: exact, name: creepNames.BUILDER_NAME, 
                         body: {WORK: 5, CARRY: 5, MOVE: 8},
                         memory: {role: roles.BUILDER, ticksNotMoved: 0,  working: true}};
 
+                    if (findIdealCost(idealBuilder) > currentEnergy) {
+                        idealBuilder.ideal = false;
+                    }
+
                     spawnQueue.push(idealBuilder);
                 }
                 for (let i = 0; i < repairersNeeded; i++) {
-                    if (repairers.length === 0)
-                        exact = false;
-
                     var idealRepairer = {ideal: exact, name: creepNames.REPAIRER_NAME, 
                         body: {WORK: 3, CARRY: 5, MOVE: 7},
                         memory: {role: roles.REPAIRER, ticksNotMoved: 0,  working: true}};
 
+                    if (findIdealCost(idealRepairer) > currentEnergy) {
+                        idealRepairer.ideal = false;
+                    }
+
                     spawnQueue.push(idealRepairer);
                 }
                 for (let i = 0; i < wallRepairersNeeded; i++) {
-                    if (wallRepairers.length === 0)
-                        exact = false;
 
                     var idealWallRepairer = {ideal: exact, name: creepNames.WALL_REPAIRER_NAME, 
                         body: {WORK: 3, CARRY: 4, MOVE: 4},
                         memory: {role: roles.WALL_REPAIRER, ticksNotMoved: 0,  working: true}};
 
+                    if (findIdealCost(idealWallRepairer) > currentEnergy) {
+                        idealWallRepairer.ideal = false;
+                    }
+
                     spawnQueue.push(idealWallRepairer);
                 }
                 for (let i = 0; i < upgradersNeeded; i++) {
-                    if (upgraders.length === 0)
-                        exact = false;
 
                     var idealUpgrader = {ideal: exact, name: creepNames.UPGRADER_NAME, 
                         body: {WORK: 1, CARRY: 4, MOVE: 2},
                         memory: {role: roles.UPGRADER, ticksNotMoved: 0,  working: true}};
+
+                    if (findIdealCost(idealWallRepairer) > currentEnergy) {
+                        idealWallRepairer.ideal = false;
+                    }
 
                     spawnQueue.push(idealUpgrader);
                 }
@@ -113,6 +123,21 @@ var spawner = {
             }
         }
     }
+}
+
+function findIdealCost(creepOptions) {
+    var totalCostNeeded = 0;
+    for (let bodyPart in creepOptions.body) {
+        //get the word for the part since js is dumb and
+        //for some reason "work" is the same as the constant
+        //used for WORK.
+        let part = bodyPart.toLowerCase();
+        for (let i = 0; i < creepOptions.body[bodyPart]; i++) {
+            //sum up the cost.
+            totalCostNeeded += BODYPART_COST[part];
+        }
+    }
+    return totalCostNeeded;
 }
 
 //**@param {Room} room */
